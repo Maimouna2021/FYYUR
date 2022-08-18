@@ -10,7 +10,13 @@
     <ul class="nav nav-pills">
         <li class="active"><a>Shows</a></li>
     </ul>
-
+    <form class="search" method="post" action="/venues/search">
+        <input class="form-control"
+          type="search"
+          name="search_term"
+          placeholder="Find a venue"
+          aria-label="Search">
+    </form>
 {#    Todo implement show search frontend #}
 
 {% endblock %}

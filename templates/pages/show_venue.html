@@ -10,9 +10,7 @@
 			ID: {{ venue.id }}
 		</p>
 		<div class="genres">
-			{% for genre in venue.genres %}
-			<span class="genre">{{ genre }}</span>
-			{% endfor %}
+			<span class="genre">{{ venue.genre }}</span>
 		</div>
 		<p>
 			<i class="fas fa-globe-americas"></i> {{ venue.city }}, {{ venue.state }}
@@ -76,6 +74,5 @@
 </section>
 
 <a href="/venues/{{ venue.id }}/edit"><button class="btn btn-primary btn-lg">Edit</button></a>
-
+<a href="/delete/{{ venue.id }}"><button class="btn btn-danger btn-lg">delete</button></a>
 {% endblock %}
-
