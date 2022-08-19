@@ -4,6 +4,7 @@
 
 import json
 from pprint import pprint
+import re
 from unicodedata import name
 import dateutil.parser
 import babel
@@ -97,11 +98,12 @@ def create_venue_submission():
   state                = request.form['state']
   address              = request.form['address']
   phone                = request.form['phone']
+  phone                = re.sub('\D', '', phone)
   genres               = request.form['genres']
   image_link           = request.form['image_link']
   facebook_link        = request.form['facebook_link']
   website_link         = request.form['website_link']
-  seeking_talent       = request.form['seeking_talent']
+  seeking_talent       = True if 'seeking_talent' in request.form else False
   seeking_description  = request.form['seeking_description']
   new_venue = Venue( 
     name =  name, 
@@ -111,7 +113,8 @@ def create_venue_submission():
     phone = phone, 
     genres = genres, 
     image_link = image_link, 
-    facebook_link = facebook_link, 
+    facebook_link = facebook_link,
+    seeking_talent = seeking_talent, 
     website_link =  website_link, 
     seeking_description = seeking_description
   ) 
@@ -120,7 +123,10 @@ def create_venue_submission():
     db.session.commit() 
     flash('Venue enregistré avec succés')
   except:
-    flash('une erreur c\'est produit')
+    db.session.rollback()
+    flash('An error occurred. Venue ' + request.form['name'] + ' impossible d\'enregistré.')
+    return url_for('/forms/new_venue.html')
+
   return render_template('pages/home.html')
 
 @app.route('/venues/<venue_id>', methods=['DELETE'])
@@ -228,18 +234,23 @@ def create_artist_submission():
   city                 = request.form['city'] 
   state                = request.form['state']
   phone                = request.form['phone']
+  phone                = re.sub('\D', '', phone)
   genres               = request.form['genres']
   facebook_link        = request.form['facebook_link']
   image_link           = request.form['image_link']
   website_link         = request.form['website_link']
+  seeking_venue        = True if 'seeking_venue' in request.form else False
   seeking_description  = request.form['seeking_description']
-  new_artists = Artist( name =  name, city = city, state = state, phone = phone, genres = genres, facebook_link = facebook_link, image_link = image_link,  website_link =  website_link, seeking_description = seeking_description) 
+  new_artists = Artist( name =  name, city = city, state = state, phone = phone, genres = genres, facebook_link = facebook_link, image_link = image_link,  website_link =  website_link, seeking_venue=seeking_venue, seeking_description = seeking_description) 
   try:
     db.session.add(new_artists) 
     db.session.commit()
     flash('Artist' + request.form['name'] + 'est enrégistré avec succés') 
   except:
-    flash('An error occurred. Venue ' + request.form['name'] + ' impossible d\'enregistré.')
+    db.session.rollback()
+    flash('An error occurred. Artist ' + request.form['name'] + ' n\'a pas été d\'enregistré.')
+    return url_for('/forms/new_artist.html')
+  
   return render_template('pages/home.html')
 
 
